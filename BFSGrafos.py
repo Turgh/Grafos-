@@ -1,0 +1,277 @@
+from collections import deque
+
+grafo = {}
+
+def inserir_vertice(grafo, vertice):
+    if vertice not in grafo:
+        grafo[vertice] = []
+    else:
+        print(f"Vértice {vertice} já existe.")
+
+def remover_vertice(grafo, vertice):
+    if vertice in grafo:
+        del grafo[vertice]
+        for vizinhos in grafo.values():
+            if vertice in vizinhos:
+                vizinhos.remove(vertice)
+    else:
+        print(f"Vértice {vertice} não encontrado.")
+
+def inserir_aresta_nao_orientado(grafo, v1, v2):
+    if v1 in grafo and v2 in grafo:
+        if v2 not in grafo[v1]:
+            grafo[v1].append(v2)
+        if v1 not in grafo[v2]:
+            grafo[v2].append(v1)
+    else:
+        print("Erro: Um ou ambos os vértices não existem.")
+
+def inserir_aresta_orientado(grafo, origem, destino):
+    if origem in grafo and destino in grafo:
+        if destino not in grafo[origem]:
+            grafo[origem].append(destino)
+    else:
+        print("Erro: Um ou ambos os vértices não existem.")
+
+def remover_aresta_nao_orientado(grafo, v1, v2):
+    if v1 in grafo and v2 in grafo:
+        if v2 in grafo[v1]:
+            grafo[v1].remove(v2)
+        if v1 in grafo[v2]:
+            grafo[v2].remove(v1)
+    else:
+        print("Erro: Um ou ambos os vértices não existem.")
+
+
+def remover_aresta_orientado(grafo, origem, destino):
+    if origem in grafo and destino in grafo:
+        if destino in grafo[origem]:
+            grafo[origem].remove(destino)
+            print(f"Aresta {origem} -> {destino} removida.")
+        else:
+            print(f"Aresta {origem} -> {destino} não existe.")
+    else:
+        print("Erro: Um ou ambos os vértices não existem.")
+
+def calc_grau(grafo, vertice):
+    if vertice in grafo:
+        return len(grafo[vertice])
+    else:
+        return 0
+
+
+def existe_aresta_nao_orientado(grafo, v1, v2):
+    if v1 in grafo and v2 in grafo:
+        if v2 in grafo[v1]:
+            print(f"Caminho entre {v1} e {v2} encontrado.")
+        else:
+            print(f"Caminho entre {v1} e {v2} não encontrado.")
+    else:
+        print("Erro: Um ou ambos os vértices não existem.")
+
+
+def existe_aresta_orientado(grafo, v1, v2):
+    if v1 in grafo and v2 in grafo:
+        if v2 in grafo[v1]:
+            print(f"Caminho {v1} -> {v2} encontrado.")
+        else:
+            print(f"Caminho {v1} -> {v2} não encontrado.")
+    else:
+        print("Erro: Um ou ambos os vértices não existem.")
+
+def vizinhos(grafo, vertice):
+    if vertice in grafo:
+        if grafo[vertice]:
+             print(f"Vizinhos de {vertice}: {', '.join(grafo[vertice])}")
+        else:
+             print(f"O vértice {vertice} não possui vizinhos.")
+    else:
+        print(f"Vértice {vertice} não encontrado.")
+
+def percurso_existente(grafo, percurso):
+    if len(percurso) <= 1:
+        print("Fim do percurso. O caminho existe.")
+        return True
+
+    vertice_atual = percurso[0]
+    proximo_vertice = percurso[1]
+
+    if vertice_atual not in grafo or proximo_vertice not in grafo:
+        print(f"Erro: Um dos vértices ({vertice_atual} ou {proximo_vertice}) não está no grafo.")
+        return False
+
+    if proximo_vertice in grafo[vertice_atual]:
+        print(f"Caminho {vertice_atual} -> {proximo_vertice} encontrado.")
+        return percurso_existente(grafo, percurso[1:])
+    else:
+        print(f"Caminho {vertice_atual} -> {proximo_vertice} NÃO encontrado. O percurso não existe.")
+        return False
+
+def tipo_grafo():
+    tipo = int(input("Digite o tipo de grafo: 1 - Não orientado; 2 - Orientado: "))
+
+    if tipo == 1:
+        print("\nOperações disponíveis (Não Orientado):")
+        print("1 - Inserir vértice")
+        print("2 - Remover vértice")
+        print("3 - Inserir aresta")
+        print("4 - Remover aresta")
+        print("5 - Calcular grau")
+        print("6 - Verificar existência de aresta")
+        print("7 - Listar vizinhos")
+        print("8 - Verificar percurso")
+
+        operacao = int(input("Escolha a operação: "))
+
+        if operacao == 1:
+            vertice = input("Nome do vértice: ")
+            inserir_vertice(grafo, vertice)
+
+        elif operacao == 2:
+            vertice = input("Nome do vértice: ")
+            remover_vertice(grafo, vertice)
+
+        elif operacao == 3:
+            v1 = input("Vértice 1: ")
+            v2 = input("Vértice 2: ")
+            inserir_aresta_nao_orientado(grafo, v1, v2)
+
+        elif operacao == 4:
+            v1 = input("Vértice 1: ")
+            v2 = input("Vértice 2: ")
+            remover_aresta_nao_orientado(grafo, v1, v2)
+
+        elif operacao == 5:
+            vertice = input("Vértice: ")
+            print(f"Grau de {vertice}: {calc_grau(grafo, vertice)}")
+
+
+        elif operacao == 6:
+            v1 = input("Vértice 1: ")
+            v2 = input("Vértice 2: ")
+            existe_aresta_nao_orientado(grafo, v1, v2)
+
+        elif operacao == 7:
+            vertice = input("Vértice: ")
+            vizinhos(grafo, vertice)
+
+        elif operacao == 8:
+            percurso_str = input("Insira o percurso (ex: A,B,C): ")
+            percurso = [v.strip() for v in percurso_str.split(',')]
+            percurso_existente(grafo, percurso)
+
+        else:
+            print("Opção inválida.")
+
+    elif tipo == 2:
+        print("\nOperações disponíveis (Orientado):")
+        print("1 - Inserir vértice")
+        print("2 - Inserir aresta (direcionada)")
+        print("3 - Remover aresta (direcionada)")
+        print("4 - Calcular grau de entrada e saída")
+        print("5 - Verificar existência de aresta")
+        print("6 - Listar vizinhos (saída)")
+        print("7 - Verificar percurso")
+
+        operacao = int(input("Escolha a operação: "))
+
+        if operacao == 1:
+            vertice = input("Nome do vértice: ")
+            inserir_vertice(grafo, vertice)
+
+        elif operacao == 2:
+            origem = input("Origem: ")
+            destino = input("Destino: ")
+            inserir_aresta_orientado(grafo, origem, destino)
+
+        elif operacao == 3:
+            origem = input("Origem: ")
+            destino = input("Destino: ")
+            remover_aresta_orientado(grafo, origem, destino)
+
+        elif operacao == 4:
+            vertice = input("Vértice: ")
+            if vertice in grafo:
+                grau_saida = len(grafo[vertice])
+                grau_entrada = sum
+
+def busca_em_largura(grafo, inicio):
+    visitados = set()
+    fila = deque([inicio])
+    percurso = []
+
+    if inicio not in grafo:
+        print(f"Vértice de início '{inicio}' não encontrado no grafo.")
+        return []
+
+    visitados.add(inicio)
+
+    while fila:
+        vertice_atual = fila.popleft()
+        percurso.append(vertice_atual)
+
+        for vizinho in grafo[vertice_atual]:
+            if vizinho not in visitados:
+                visitados.add(vizinho)
+                fila.append(vizinho)
+
+    return percurso
+
+def menor_caminho_bfs(grafo, inicio, destino):
+    if inicio not in grafo or destino not in grafo:
+        print(f"Erro: O vértice de início '{inicio}' ou o vértice de destino '{destino}' não está no grafo.")
+        return None
+
+    if inicio == destino:
+        return [inicio]
+
+    visitados = set()
+    fila = deque([inicio])
+    predecessores = {inicio: None}
+
+    visitados.add(inicio)
+
+    while fila:
+        vertice_atual = fila.popleft()
+
+        for vizinho in grafo[vertice_atual]:
+            if vizinho not in visitados:
+                visitados.add(vizinho)
+                predecessores[vizinho] = vertice_atual
+                fila.append(vizinho)
+
+                if vizinho == destino:
+                    caminho = []
+                    passo = destino
+                    while passo is not None:
+                        caminho.append(passo)
+                        passo = predecessores.get(passo)
+                    return caminho[::-1]
+
+    return None
+
+grafo_exemplo = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D', 'E'],
+    'C': ['A', 'F'],
+    'D': ['B'],
+    'E': ['B', 'F'],
+    'F': ['C', 'E']
+}
+
+print("Grafo de exemplo:")
+for vertice, vizinhos_list in grafo_exemplo.items():
+    print(f"  {vertice}: {vizinhos_list}")
+
+inicio_bfs = 'A'
+percurso_bfs = busca_em_largura(grafo_exemplo, inicio_bfs)
+print(f"\nPercurso BFS a partir de '{inicio_bfs}': {percurso_bfs}")
+
+inicio_menor_caminho = 'A'
+destino_menor_caminho = 'F'
+caminho = menor_caminho_bfs(grafo_exemplo, inicio_menor_caminho, destino_menor_caminho)
+
+if caminho:
+    print(f"\nMenor caminho de '{inicio_menor_caminho}' para '{destino_menor_caminho}': {caminho}")
+else:
+    print(f"\nNão foi encontrado um caminho de '{inicio_menor_caminho}' para '{destino_menor_caminho}'.")
